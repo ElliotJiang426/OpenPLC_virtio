@@ -59,9 +59,23 @@ elif [ "$1" == "pixtend_2l" ]; then
     echo rpi > ../scripts/openplc_platform
     echo pixtend_2l > ../scripts/openplc_driver  
 
-elif [ "$1" == "rpi" ]; then
+elif [ "$1" == "rpi_1" ]; then
     echo "Activating Raspberry Pi driver"
-    cp ./hardware_layers/raspberrypi.cpp ./hardware_layer.cpp
+    cp ./hardware_layers/raspberrypi_1.cpp ./hardware_layer.cpp
+    echo "Setting Platform"
+    echo rpi > ../scripts/openplc_platform
+    echo rpi > ../scripts/openplc_driver
+
+elif [ "$1" == "rpi_2" ]; then
+    echo "Activating Raspberry Pi driver"
+    cp ./hardware_layers/raspberrypi_2.cpp ./hardware_layer.cpp
+    echo "Setting Platform"
+    echo rpi > ../scripts/openplc_platform
+    echo rpi > ../scripts/openplc_driver
+
+elif [ "$1" == "rpi_3" ]; then
+    echo "Activating Raspberry Pi driver"
+    cp ./hardware_layers/raspberrypi_3.cpp ./hardware_layer.cpp
     echo "Setting Platform"
     echo rpi > ../scripts/openplc_platform
     echo rpi > ../scripts/openplc_driver

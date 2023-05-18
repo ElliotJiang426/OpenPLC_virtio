@@ -326,6 +326,9 @@ elif [ "$1" == "docker" ]; then
     linux_install_deps
     install_py_deps
     install_all_libs
+    apt-get install -y wget
+    wget https://github.com/WiringPi/WiringPi/releases/download/2.61-1/wiringpi-2.61-1-arm64.deb
+    dpkg -i wiringpi-2.61-1-arm64.deb
 
     echo ""
     echo "[FINALIZING]"
