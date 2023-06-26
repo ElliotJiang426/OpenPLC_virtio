@@ -431,6 +431,7 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].discrete_inputs.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    // NOTE: this buffer may be modified with virtio
                     uint8_t *tempBuff;
                     tempBuff = (uint8_t *)malloc(mb_devices[i].discrete_inputs.num_regs);
                     nanosleep(&ts, NULL); 
@@ -609,6 +610,7 @@ void *querySlaveDevices(void *arg)
 //-----------------------------------------------------------------------------
 // This function is called by the main OpenPLC routine when it is initializing.
 // Modbus master initialization procedures are here.
+// NOTE: initial modbus slave devices according to website(runtime) config
 //-----------------------------------------------------------------------------
 void initializeMB()
 {

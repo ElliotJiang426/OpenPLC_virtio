@@ -152,6 +152,7 @@ static int _modbus_rtu_prepare_response_tid(const uint8_t *req, int *req_length)
     return 0;
 }
 
+// NOTE: chechsum for message request
 static int _modbus_rtu_send_msg_pre(uint8_t *req, int req_length)
 {
     uint16_t crc = crc16(req, req_length);
@@ -180,6 +181,7 @@ static void win32_ser_init(struct win32_ser *ws)
     ws->fd = INVALID_HANDLE_VALUE;
 }
 
+// NOTE: seems read from fd to ws buffer
 /* FIXME Try to remove length_to_read -> max_len argument, only used by win32 */
 static int win32_ser_select(struct win32_ser *ws, int max_len,
                             const struct timeval *tv)
@@ -232,6 +234,7 @@ static int win32_ser_select(struct win32_ser *ws, int max_len,
     }
 }
 
+// NOTE: read is from ws buffer to message buffer
 static int win32_ser_read(struct win32_ser *ws, uint8_t *p_msg,
                           unsigned int max_len)
 {
@@ -306,6 +309,7 @@ static int _modbus_rtu_receive(modbus_t *ctx, uint8_t *req)
     int rc;
     modbus_rtu_t *ctx_rtu = ctx->backend_data;
 
+    // WHY: what does confirmation to ignore mean?
     if (ctx_rtu->confirmation_to_ignore) {
         _modbus_receive_msg(ctx, req, MSG_CONFIRMATION);
         /* Ignore errors and reset the flag */
@@ -1185,6 +1189,7 @@ static void _modbus_rtu_free(modbus_t *ctx) {
     free(ctx);
 }
 
+// NOTE: backend seems a function collection for modbus device
 const modbus_backend_t _modbus_rtu_backend = {
     _MODBUS_BACKEND_TYPE_RTU,
     _MODBUS_RTU_HEADER_LENGTH,

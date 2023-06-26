@@ -1,0 +1,15 @@
+FROM arm64v8/ubuntu
+
+RUN apt update && apt upgrade 
+
+RUN apt install -y git python3 python3-pip cmake 
+
+RUN apt upgrade -y bison yacc flex 
+
+WORKDIR /root
+
+RUN git clone https://github.com/thiagoralves/OpenPLC_v3.git
+
+RUN ./OpenPLC_v3/install.sh docker
+
+RUN ./OpenPLC_v3/start_openplc.sh

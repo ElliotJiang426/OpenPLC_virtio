@@ -126,6 +126,7 @@ int modbus_flush(modbus_t *ctx)
 }
 
 /* Computes the length of the expected response */
+// NOTE: use request info to infer response length
 static unsigned int compute_response_length_from_request(modbus_t *ctx, uint8_t *req)
 {
     int length;
@@ -168,6 +169,7 @@ static int send_msg(modbus_t *ctx, uint8_t *msg, int msg_length)
     int rc;
     int i;
 
+    // NOTE: doing checksum
     msg_length = ctx->backend->send_msg_pre(msg, msg_length);
 
     if (ctx->debug) {
@@ -247,7 +249,7 @@ int modbus_send_raw_request(modbus_t *ctx, uint8_t *raw_req, int raw_req_length)
  *  | Client | ---------------------->| Server |
  *  ---------- Confirmation  Response ----------
  */
-
+// NOTE: change read length according to function code
 /* Computes the length to read after the function received */
 static uint8_t compute_meta_length_after_function(int function,
                                                   msg_type_t msg_type)
@@ -368,6 +370,7 @@ int _modbus_receive_msg(modbus_t *ctx, uint8_t *msg, msg_type_t msg_type)
     if (msg_type == MSG_INDICATION) {
         /* Wait for a message, we don't know when the message will be
          * received */
+        // NOTE: slave should wait for request(message)
         p_tv = NULL;
     } else {
         tv.tv_sec = ctx->response_timeout.tv_sec;
@@ -375,6 +378,8 @@ int _modbus_receive_msg(modbus_t *ctx, uint8_t *msg, msg_type_t msg_type)
         p_tv = &tv;
     }
 
+    // NOTE: 1: read function code
+    //       2: read payload(meta)
     while (length_to_read != 0) {
         rc = ctx->backend->select(ctx, &rset, p_tv, length_to_read);
         if (rc == -1) {
@@ -1036,6 +1041,8 @@ static int read_io_status(modbus_t *ctx, int function,
     uint8_t req[_MIN_REQ_LENGTH];
     uint8_t rsp[MAX_MESSAGE_LENGTH];
 
+    // NOTE: construct a modbus io request basis, maybe used as virtio entry?
+    //       read ctx->slave at addr with nb bytes
     req_length = ctx->backend->build_request_basis(ctx, function, addr, nb, req);
 
     rc = send_msg(ctx, req, req_length);
@@ -1128,6 +1135,7 @@ int modbus_read_input_bits(modbus_t *ctx, int addr, int nb, uint8_t *dest)
         return nb;
 }
 
+// NOTE: it seems the same as read_io_status
 /* Reads the data from a remove device and put that data into an array */
 static int read_registers(modbus_t *ctx, int function, int addr, int nb,
                           uint16_t *dest)
